@@ -2,7 +2,7 @@
 
 A full-stack event discovery platform for finding sports and esports events near you, built with React, Node.js, PostgreSQL, Faktory job queue, and real-time chat.
 
-![EventHub Banner](screenshots/home.png)
+![Home Page](screenshots/signup.png)
 
 ## 🚀 Features
 
@@ -41,20 +41,20 @@ A full-stack event discovery platform for finding sports and esports events near
 
 ## 📸 Screenshots
 
-### Home Page
-![Home](screenshots/home.png)
-
 ### Event Discovery
 ![Events](screenshots/events.png)
+
+### Event Discovery - Dark Mode
+![Events Dark Mode](screenshots/eventsdarkmode.png)
 
 ### Groups
 ![Groups](screenshots/groups.png)
 
 ### Real-time Chat
-![Chat](screenshots/chat.png)
+![Chat](screenshots/group%20chat.png)
 
-### Dark Mode
-![Dark Mode](screenshots/dark-mode.png)
+### AI Assistant (HELP)
+![AI Bot](screenshots/aibot.png)
 
 ## 🏃‍♂️ Getting Started
 
@@ -144,7 +144,7 @@ FRONTEND_URL=http://localhost:5173
 - Automatic retry logic for failed scrapes
 - Job monitoring via Web UI at http://localhost:7420
 - Persistent job storage with Redis backend
-- Scheduled scraping every 4 hours (every 6 hours configurable)
+- Scheduled scraping every 4 hours
 
 ### Automated Event Scraping
 - Faktory worker processes scraping jobs
