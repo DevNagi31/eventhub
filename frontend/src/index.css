@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply transition-colors duration-200;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-mac-bg text-mac-text;
+  }
+
+  /* Dark mode overrides */
+  .dark {
+    --mac-bg: #000000;
+    --mac-surface: #1C1C1E;
+    --mac-surface-hover: #2C2C2E;
+    --mac-border: #38383A;
+    --mac-text: #FFFFFF;
+    --mac-text-secondary: #98989D;
+  }
+
+  .dark body {
+    background-color: var(--mac-bg);
+    color: var(--mac-text);
+  }
+
+  .dark .bg-mac-bg {
+    background-color: var(--mac-bg);
+  }
+
+  .dark .bg-mac-surface {
+    background-color: var(--mac-surface);
+  }
+
+  .dark .hover\:bg-mac-surface-hover:hover {
+    background-color: var(--mac-surface-hover);
+  }
+
+  .dark .border-mac-border {
+    border-color: var(--mac-border);
+  }
+
+  .dark .text-mac-text {
+    color: var(--mac-text);
+  }
+
+  .dark .text-mac-text-secondary {
+    color: var(--mac-text-secondary);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black 
+           rounded-mac font-medium hover:opacity-90 active:scale-[0.98] 
+           shadow-md transition-all duration-150;
+  }
+  
+  .btn-secondary {
+    @apply px-5 py-2.5 bg-mac-surface text-mac-text rounded-mac font-medium
+           hover:bg-mac-surface-hover active:scale-[0.98] border border-mac-border
+           transition-all duration-150;
+  }
+  
+  .card {
+    @apply bg-mac-surface border border-mac-border rounded-mac shadow-mac
+           transition-shadow duration-300;
+  }
+  
+  .input {
+    @apply w-full px-4 py-2.5 bg-mac-surface border border-mac-border rounded-mac
+           focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white 
+           focus:ring-opacity-20 placeholder:text-mac-text-secondary text-mac-text;
+  }
+  
+  .skeleton {
+    @apply animate-pulse bg-mac-surface rounded;
+  }
+}
