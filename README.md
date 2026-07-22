@@ -43,23 +43,6 @@ A full-stack event discovery platform for finding sports and esports events near
 - Persistent message storage
 - Job monitoring via Faktory Web UI
 
-## Screenshots
-
-### Event Discovery
-![Events](screenshots/events.png)
-
-### Event Discovery - Dark Mode
-![Events Dark Mode](screenshots/eventsdarkmode.png)
-
-### Groups
-![Groups](screenshots/groups.png)
-
-### Real-time Chat
-![Chat](screenshots/group%20chat.png)
-
-### AI Assistant (HELP)
-![AI Bot](screenshots/aibot.png)
-
 ## Getting Started
 
 ### Prerequisites
