@@ -50,7 +50,7 @@ router.post('/message', authenticateToken, chatLimiter, async (req, res) => {
     });
   } catch (error) {
     console.error('Chat error:', error);
-    res.status(500).json({ error: 'Failed to process message', details: error.message });
+    res.status(500).json({ error: 'Failed to process message' });
   }
 });
 

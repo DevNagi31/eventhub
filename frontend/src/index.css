@@ -3,10 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply transition-colors duration-200;
-  }
-  
   body {
     @apply font-sans antialiased bg-mac-bg text-mac-text;
   }
@@ -53,29 +49,109 @@
 
 @layer components {
   .btn-primary {
-    @apply px-5 py-2.5 bg-black dark:bg-white text-white dark:text-black 
-           rounded-mac font-medium hover:opacity-90 active:scale-[0.98] 
-           shadow-md transition-all duration-150;
+    @apply px-6 py-2.5 bg-eh-orange text-white
+           rounded-full font-semibold hover:bg-eh-orange-dark active:scale-[0.98]
+           transition-all duration-150;
+    box-shadow: 0 8px 20px rgba(255, 116, 72, 0.30);
   }
-  
+
   .btn-secondary {
-    @apply px-5 py-2.5 bg-mac-surface text-mac-text rounded-mac font-medium
+    @apply px-6 py-2.5 bg-white text-mac-text rounded-full font-medium
            hover:bg-mac-surface-hover active:scale-[0.98] border border-mac-border
            transition-all duration-150;
   }
-  
+
   .card {
-    @apply bg-mac-surface border border-mac-border rounded-mac shadow-mac
-           transition-shadow duration-300;
+    @apply bg-white border border-mac-border rounded-[20px]
+           transition-all duration-300;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
   }
-  
+
   .input {
-    @apply w-full px-4 py-2.5 bg-mac-surface border border-mac-border rounded-mac
-           focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white 
-           focus:ring-opacity-20 placeholder:text-mac-text-secondary text-mac-text;
+    @apply w-full px-4 py-2.5 bg-white border border-mac-border rounded-[10px]
+           focus:outline-none focus:ring-2 focus:ring-eh-orange
+           focus:ring-opacity-30 placeholder:text-mac-text-secondary text-mac-text;
   }
   
   .skeleton {
     @apply animate-pulse bg-mac-surface rounded;
   }
+}
+
+/* ---------- EventHub landing page ---------- */
+.eh-cta {
+  background: #FF7448;
+  box-shadow: 0 10px 24px rgba(36, 210, 212, 0.28), 0 8px 20px rgba(255, 116, 72, 0.30);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.eh-cta:hover {
+  background: #e85f38;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(36, 210, 212, 0.32), 0 12px 26px rgba(255, 116, 72, 0.34);
+}
+
+.eh-navlink {
+  color: #16213E;
+  transition: color 0.15s ease;
+}
+.eh-navlink:hover { color: #FF7448; }
+
+.eh-signin {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.eh-signin:hover { background: #eef0f3; border-color: #d9dde4; }
+
+.eh-feature {
+  transition: transform 0.2s ease;
+}
+.eh-feature:hover { transform: translateY(-4px); }
+
+.eh-footlink {
+  color: #c4cbda;
+  transition: color 0.15s ease;
+}
+.eh-footlink:hover { color: #ffffff; }
+
+.eh-input {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.eh-input:focus {
+  outline: none;
+  border-color: #FF7448;
+  box-shadow: 0 0 0 3px rgba(255, 116, 72, 0.12);
+}
+
+/* Landing layout grids (desktop-first, collapse on smaller screens) */
+.eh-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.eh-feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px 40px; }
+.eh-tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 60px; }
+.eh-testi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.eh-register-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 24px; }
+.eh-footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; }
+
+@media (max-width: 900px) {
+  .eh-hero-grid { grid-template-columns: 1fr; }
+  .eh-feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .eh-footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .eh-feature-grid,
+  .eh-tech-grid,
+  .eh-testi-grid,
+  .eh-register-grid,
+  .eh-footer-grid { grid-template-columns: 1fr; }
+  .eh-testi-grid > div { flex-direction: column; text-align: center; }
+}
+
+@keyframes eh-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.eh-reveal {
+  opacity: 0;
+  animation: eh-fade-up 0.7s ease forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .eh-reveal { animation: none; opacity: 1; }
+  .eh-cta, .eh-feature { transition: none; }
 }

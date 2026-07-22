@@ -2,7 +2,11 @@
 
 A full-stack event discovery platform for finding sports and esports events near you, built with React, Node.js, PostgreSQL, Faktory job queue, and real-time chat.
 
-![Home Page](screenshots/signup.png)
+![Landing Page](screenshots/landing-hero.jpg)
+
+![Key Features](screenshots/landing-features.jpg)
+
+![Events](screenshots/events-page.jpg)
 
 ## 🚀 Features
 
@@ -12,7 +16,7 @@ A full-stack event discovery platform for finding sports and esports events near
 - **Real-time Chat**: Live group messaging with Socket.io and persistent message history
 - **AI Assistant (HELP)**: Get personalized event recommendations
 - **Dark Mode**: Toggle between light and dark themes
-- **Responsive Design**: Clean macOS-inspired UI with Tailwind CSS
+- **Responsive Design**: Clean, bright startup-style UI with Tailwind CSS and Poppins
 
 ## 🛠️ Tech Stack
 

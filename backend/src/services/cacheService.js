@@ -1,61 +1,58 @@
-import redisClient from '../config/redis.js';
+import { connectRedis } from '../config/redis.js';
 
 class CacheService {
   constructor() {
-    this.defaultTTL = 3600; // 1 hour
+    this.client = null;
+    this.init();
+  }
+
+  async init() {
+    this.client = await connectRedis();
+  }
+
+  generateAPIKey(source, params) {
+    const sorted = Object.entries(params)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => `${k}=${Array.isArray(v) ? v.join(',') : v}`)
+      .join('&');
+    return `api:${source}:${sorted}`;
+  }
+
+  generateEventKey(source, externalId) {
+    return `event:${source}:${externalId}`;
   }
 
   async get(key) {
+    if (!this.client) return null;
     try {
-      const data = await redisClient.get(key);
+      const data = await this.client.get(key);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error('Cache get error:', error);
+      console.error('Cache get error:', error.message);
       return null;
     }
   }
 
-  async set(key, value, ttl = this.defaultTTL) {
+  async set(key, value, ttl = 3600) {
+    if (!this.client) return false;
     try {
-      await redisClient.setEx(key, ttl, JSON.stringify(value));
+      await this.client.setEx(key, ttl, JSON.stringify(value));
       return true;
     } catch (error) {
-      console.error('Cache set error:', error);
+      console.error('Cache set error:', error.message);
       return false;
     }
   }
 
-  async delete(key) {
+  async del(key) {
+    if (!this.client) return false;
     try {
-      await redisClient.del(key);
+      await this.client.del(key);
       return true;
     } catch (error) {
-      console.error('Cache delete error:', error);
+      console.error('Cache del error:', error.message);
       return false;
     }
-  }
-
-  async deletePattern(pattern) {
-    try {
-      const keys = await redisClient.keys(pattern);
-      if (keys.length > 0) {
-        await redisClient.del(keys);
-      }
-      return true;
-    } catch (error) {
-      console.error('Cache delete pattern error:', error);
-      return false;
-    }
-  }
-
-  // Generate cache key for events
-  generateEventKey(lat, lng, radius, category) {
-    return `events:${lat.toFixed(2)}:${lng.toFixed(2)}:${radius}:${category || 'all'}`;
-  }
-
-  // Generate cache key for API responses
-  generateAPIKey(apiName, params) {
-    return `api:${apiName}:${JSON.stringify(params)}`;
   }
 }
 

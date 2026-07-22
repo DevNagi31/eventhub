@@ -126,7 +126,7 @@ export default function GroupChat() {
                   <div
                     className={`max-w-[70%] rounded-mac p-4 ${
                       msg.user_id === user.id
-                        ? 'bg-black dark:bg-white text-white dark:text-black'
+                        ? 'bg-mac-accent text-white'
                         : 'bg-mac-surface text-mac-text border border-mac-border'
                     }`}
                   >

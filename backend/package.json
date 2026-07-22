@@ -9,18 +9,21 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.6.1",
+    "@anthropic-ai/sdk": "^0.17.0",
+    "axios": "^1.4.0",
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.71.0",
+    "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "pg": "^8.11.0",
-    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "ical.js": "^2.2.1",
     "jsonwebtoken": "^9.0.0",
-    "axios": "^1.4.0",
-    "cheerio": "^1.0.0-rc.12",
-    "redis": "^4.6.7",
     "node-cron": "^3.0.3",
-    "@anthropic-ai/sdk": "^0.17.0"
+    "node-ical": "^0.25.6",
+    "pg": "^8.11.0",
+    "redis": "^4.6.7",
+    "socket.io": "^4.6.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

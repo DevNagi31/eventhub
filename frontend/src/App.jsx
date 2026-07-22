@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ToastProvider } from './components/Toast';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -26,6 +28,9 @@ function ProtectedRoute({ children }) {
 
 function AppRoutes() {
   const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
+  // The landing page ships its own navbar that matches the marketing design.
+  const hideGlobalNav = location.pathname === '/';
 
   if (loading) {
     return (
@@ -37,7 +42,7 @@ function AppRoutes() {
 
   return (
     <>
-      <Navbar />
+      {!hideGlobalNav && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route
@@ -96,11 +101,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

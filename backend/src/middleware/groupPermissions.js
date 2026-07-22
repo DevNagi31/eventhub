@@ -28,8 +28,8 @@ export const requireGroupAdmin = async (req, res, next) => {
 
   try {
     const result = await query(
-      'SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2 AND role IN ($3, $4)',
-      [groupId, userId, 'admin', 'moderator']
+      "SELECT * FROM group_members WHERE group_id = $1 AND user_id = $2 AND role IN ('admin', 'moderator')",
+      [groupId, userId]
     );
 
     if (result.rows.length === 0) {

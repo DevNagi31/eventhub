@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -31,6 +31,7 @@ export const searchEvents = (params) => api.get('/events/search', { params });
 export const getEvent = (id) => api.get(`/events/${id}`);
 export const refreshEvents = (data) => api.post('/events/refresh', data);
 export const getCategories = () => api.get('/events/meta/categories');
+export const getScrapeStatus = () => api.get('/events/scrape-status');
 
 // Groups
 export const createGroup = (data) => api.post('/groups', data);
@@ -49,10 +50,25 @@ export const createCustomEvent = (data) => api.post('/group-events/create', data
 export const rsvpEvent = (eventId, status) => api.post(`/group-events/${eventId}/rsvp`, { status });
 export const getEventRSVPs = (eventId) => api.get(`/group-events/${eventId}/rsvps`);
 
+// Saved Events
+export const getSavedEvents = () => api.get('/saved-events');
+export const saveEvent = (eventId) => api.post(`/saved-events/${eventId}`);
+export const unsaveEvent = (eventId) => api.delete(`/saved-events/${eventId}`);
+export const checkSavedEvents = (eventIds) => api.post('/saved-events/check', { eventIds });
+
 // Chat
 export const sendChatMessage = (message) => api.post('/chat/message', { message });
 
-export default api;
+// Group Posts
+export const getGroupPosts = (groupId, limit = 20, offset = 0) =>
+  api.get(`/group-posts/${groupId}`, { params: { limit, offset } });
+export const createGroupPost = (groupId, content) =>
+  api.post(`/group-posts/${groupId}`, { content });
+export const deleteGroupPost = (groupId, postId) =>
+  api.delete(`/group-posts/${groupId}/${postId}`);
+
 // Group Messages
-export const getGroupMessages = (groupId, limit = 50) => 
+export const getGroupMessages = (groupId, limit = 50) =>
   api.get(`/group-messages/${groupId}`, { params: { limit } });
+
+export default api;

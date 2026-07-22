@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { searchGroups, createGroup } from '../services/api';
 import { Users, MapPin, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 
 export default function Groups() {
   const { user } = useAuth();
@@ -159,6 +160,7 @@ export default function Groups() {
 
 function CreateGroupModal({ onClose, onSuccess }) {
   const { user } = useAuth();
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -182,6 +184,7 @@ function CreateGroupModal({ onClose, onSuccess }) {
           lng: user?.lng || -75.9179,
         },
       });
+      toast.success('Group created!');
       onSuccess();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to create group');
@@ -196,7 +199,7 @@ function CreateGroupModal({ onClose, onSuccess }) {
         <h2 className="text-2xl font-semibold mb-6">Create New Group</h2>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-mac text-red-600 text-sm">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-mac text-red-600 dark:text-red-400 text-sm">
             {error}
           </div>
         )}

@@ -9,10 +9,14 @@ const router = express.Router();
 // Register
 router.post('/register', authLimiter, async (req, res) => {
   try {
-    const { email, username, password, location } = req.body;
+    const { email, username, password, location, preferences } = req.body;
 
     if (!email || !username || !password) {
       return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
     }
 
     const existingUser = await query(
@@ -36,7 +40,7 @@ router.post('/register', authLimiter, async (req, res) => {
         hashedPassword,
         location?.lat || 42.0987,
         location?.lng || -75.9179,
-        JSON.stringify([])
+        JSON.stringify(Array.isArray(preferences) ? preferences : [])
       ]
     );
 

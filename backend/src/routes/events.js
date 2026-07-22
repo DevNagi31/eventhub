@@ -25,16 +25,35 @@ router.get('/search', apiLimiter, optionalAuth, async (req, res) => {
       return res.status(400).json({ error: 'Latitude and longitude required' });
     }
 
+    const userLat = parseFloat(lat);
+    const userLng = parseFloat(lng);
+    const maxRadius = parseFloat(radius);
+
+    // Approximate bounding box (1 degree lat ~ 69 miles, 1 degree lng ~ 69 * cos(lat) miles)
+    const latDelta = maxRadius / 69.0;
+    const lngDelta = maxRadius / (69.0 * Math.cos(userLat * Math.PI / 180));
+
+    // Include online events (lat=0,lng=0) alongside local bounding box
     let queryText = `
-      SELECT 
+      SELECT
         id, external_id, title, description, event_type, category,
         lat, lng, venue_name, start_time, end_time, price, registration_url, source
       FROM events
       WHERE start_time >= $1
+        AND (
+          (lat BETWEEN $2 AND $3 AND lng BETWEEN $4 AND $5)
+          OR (lat = 0 AND lng = 0)
+        )
     `;
 
-    const params = [startDate || new Date()];
-    let paramIndex = 2;
+    const params = [
+      startDate || new Date(),
+      userLat - latDelta,
+      userLat + latDelta,
+      userLng - lngDelta,
+      userLng + lngDelta,
+    ];
+    let paramIndex = 6;
 
     if (category) {
       queryText += ` AND category = $${paramIndex}`;
@@ -59,18 +78,23 @@ router.get('/search', apiLimiter, optionalAuth, async (req, res) => {
 
     const result = await query(queryText, params);
 
-    // Filter by distance and calculate distance
-    const userLat = parseFloat(lat);
-    const userLng = parseFloat(lng);
-    const maxRadius = parseFloat(radius);
-
+    // Refine with exact Haversine distance; online events (lat=0,lng=0) always included
     const events = result.rows
       .map(event => {
-        const distance = calculateDistance(userLat, userLng, event.lat, event.lng);
-        return { ...event, distance_miles: distance.toFixed(2) };
+        const isOnline = parseFloat(event.lat) === 0 && parseFloat(event.lng) === 0;
+        const distance = isOnline ? 0 : calculateDistance(userLat, userLng, event.lat, event.lng);
+        return { ...event, distance_miles: isOnline ? 'Online' : distance.toFixed(2) };
       })
-      .filter(event => parseFloat(event.distance_miles) <= maxRadius)
-      .sort((a, b) => parseFloat(a.distance_miles) - parseFloat(b.distance_miles));
+      .filter(event => event.distance_miles === 'Online' || parseFloat(event.distance_miles) <= maxRadius)
+      .sort((a, b) => {
+        // Local events sorted by distance first, then online events after
+        const aOnline = a.distance_miles === 'Online';
+        const bOnline = b.distance_miles === 'Online';
+        if (aOnline && bOnline) return new Date(a.start_time) - new Date(b.start_time);
+        if (aOnline) return 1;
+        if (bOnline) return -1;
+        return parseFloat(a.distance_miles) - parseFloat(b.distance_miles);
+      });
 
     res.json({
       count: events.length,
@@ -80,6 +104,11 @@ router.get('/search', apiLimiter, optionalAuth, async (req, res) => {
     console.error('Error searching events:', error);
     res.status(500).json({ error: 'Failed to search events' });
   }
+});
+
+// Get scrape status (must be before /:id to avoid being caught by wildcard)
+router.get('/scrape-status', async (req, res) => {
+  res.json(eventAggregator.getStatus());
 });
 
 // Get single event by ID
@@ -105,7 +134,7 @@ router.get('/:id', apiLimiter, async (req, res) => {
   }
 });
 
-// Refresh events from APIs
+// Refresh events from APIs and scrapers
 router.post('/refresh', apiLimiter, async (req, res) => {
   try {
     const { lat, lng, radius = 50, categories = [], games = [] } = req.body;
@@ -114,18 +143,48 @@ router.post('/refresh', apiLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Location required' });
     }
 
+    const io = req.app.get('io');
+
+    // Notify clients that scraping started
+    if (io) {
+      io.to('scrape-status').emit('scrape-started', { timestamp: new Date().toISOString() });
+    }
+
     const events = await eventAggregator.fetchAndStoreEvents(
       { lat, lng },
       radius,
-      { categories, games, includeEsports: true }
+      { categories, games, includeEsports: true, useScraper: true },
+      (progress) => {
+        // Emit per-source progress updates
+        if (io) {
+          io.to('scrape-status').emit('scrape-progress', progress);
+        }
+      }
     );
 
-    res.json({
+    const result = {
       message: 'Events refreshed successfully',
-      count: events.length
-    });
+      count: events.length,
+      details: eventAggregator.getStatus().lastResult,
+    };
+
+    // Notify clients that scraping completed
+    if (io) {
+      io.to('scrape-status').emit('scrape-completed', {
+        count: events.length,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    res.json(result);
   } catch (error) {
     console.error('Error refreshing events:', error);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to('scrape-status').emit('scrape-failed', { error: 'Refresh failed' });
+    }
+
     res.status(500).json({ error: 'Failed to refresh events' });
   }
 });

@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getGroup, joinGroup, leaveGroup, getGroupMembers, getGroupEvents } from '../services/api';
-import { Users, MapPin, Calendar, ArrowLeft, UserPlus, UserMinus, MessageSquare } from 'lucide-react';
+import { getGroup, joinGroup, leaveGroup, getGroupMembers, getGroupEvents, getGroupPosts, createGroupPost, deleteGroupPost } from '../services/api';
+import { Users, MapPin, Calendar, ArrowLeft, UserPlus, UserMinus, MessageSquare, Send, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 
 export default function GroupDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
   const [group, setGroup] = useState(null);
   const [members, setMembers] = useState([]);
   const [events, setEvents] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [postInput, setPostInput] = useState('');
+  const [postLoading, setPostLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('about');
@@ -22,14 +27,16 @@ export default function GroupDetail() {
   const fetchGroupData = async () => {
     setLoading(true);
     try {
-      const [groupRes, membersRes, eventsRes] = await Promise.all([
+      const [groupRes, membersRes, eventsRes, postsRes] = await Promise.all([
         getGroup(id),
         getGroupMembers(id),
         getGroupEvents(id),
+        getGroupPosts(id),
       ]);
       setGroup(groupRes.data);
       setMembers(membersRes.data);
       setEvents(eventsRes.data);
+      setPosts(postsRes.data.posts);
     } catch (error) {
       console.error('Failed to fetch group:', error);
     } finally {
@@ -42,8 +49,9 @@ export default function GroupDetail() {
     try {
       await joinGroup(id);
       await fetchGroupData();
+      toast.success('Successfully joined the group!');
     } catch (error) {
-      console.error('Failed to join group:', error);
+      toast.error(error.response?.data?.error || 'Failed to join group');
     } finally {
       setActionLoading(false);
     }
@@ -51,16 +59,43 @@ export default function GroupDetail() {
 
   const handleLeave = async () => {
     if (!confirm('Are you sure you want to leave this group?')) return;
-    
+
     setActionLoading(true);
     try {
       await leaveGroup(id);
       await fetchGroupData();
+      toast.success('You left the group');
     } catch (error) {
-      console.error('Failed to leave group:', error);
-      alert(error.response?.data?.error || 'Failed to leave group');
+      toast.error(error.response?.data?.error || 'Failed to leave group');
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handlePost = async (e) => {
+    e.preventDefault();
+    if (!postInput.trim() || postLoading) return;
+
+    setPostLoading(true);
+    try {
+      const res = await createGroupPost(id, postInput.trim());
+      setPosts((prev) => [res.data.post, ...prev]);
+      setPostInput('');
+      toast.success('Post published!');
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to create post');
+    } finally {
+      setPostLoading(false);
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    try {
+      await deleteGroupPost(id, postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      toast.info('Post deleted');
+    } catch (error) {
+      toast.error('Failed to delete post');
     }
   };
 
@@ -177,6 +212,16 @@ export default function GroupDetail() {
                 About
               </button>
               <button
+                onClick={() => setActiveTab('posts')}
+                className={`pb-3 border-b-2 transition-colors ${
+                  activeTab === 'posts'
+                    ? 'border-mac-text text-mac-text'
+                    : 'border-transparent text-mac-text-secondary hover:text-mac-text'
+                }`}
+              >
+                Posts ({posts.length})
+              </button>
+              <button
                 onClick={() => setActiveTab('events')}
                 className={`pb-3 border-b-2 transition-colors ${
                   activeTab === 'events'
@@ -217,6 +262,71 @@ export default function GroupDetail() {
                 <span className="text-mac-text-secondary">{group.event_type}</span>
               </p>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'posts' && (
+          <div className="space-y-4">
+            {/* Post input (only for members) */}
+            {group.isMember && (
+              <form onSubmit={handlePost} className="card p-4">
+                <div className="flex space-x-3">
+                  <input
+                    type="text"
+                    value={postInput}
+                    onChange={(e) => setPostInput(e.target.value)}
+                    placeholder="Share something with the group..."
+                    className="input flex-1"
+                    disabled={postLoading}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!postInput.trim() || postLoading}
+                    className="btn-primary flex items-center space-x-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span className="hidden sm:inline">Post</span>
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {posts.length === 0 ? (
+              <div className="card p-12 text-center">
+                <p className="text-mac-text-secondary">No posts yet. Be the first to share something!</p>
+              </div>
+            ) : (
+              posts.map((post) => (
+                <div key={post.id} className="card p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-8 h-8 bg-mac-surface-hover rounded-full flex items-center justify-center">
+                        <span className="text-xs font-medium">
+                          {post.username?.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{post.username}</p>
+                        <p className="text-xs text-mac-text-secondary">
+                          {new Date(post.created_at).toLocaleDateString(undefined, {
+                            month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    {(post.user_id === user?.id || group.userRole === 'admin') && (
+                      <button
+                        onClick={() => handleDeletePost(post.id)}
+                        className="p-1 text-mac-text-secondary hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  <p className="whitespace-pre-wrap">{post.content}</p>
+                </div>
+              ))
+            )}
           </div>
         )}
 

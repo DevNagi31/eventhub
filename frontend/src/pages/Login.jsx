@@ -17,7 +17,7 @@ export default function Login() {
 
     try {
       await login({ email, password });
-      navigate('/');
+      navigate('/events');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to login');
     } finally {
@@ -33,7 +33,7 @@ export default function Login() {
           <p className="text-mac-text-secondary mb-8">Welcome back to EventHub</p>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-mac text-red-600 text-sm">
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-mac text-red-600 dark:text-red-400 text-sm">
               {error}
             </div>
           )}

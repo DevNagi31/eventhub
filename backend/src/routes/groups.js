@@ -61,18 +61,31 @@ router.get('/search', optionalAuth, async (req, res) => {
       return res.status(400).json({ error: 'Latitude and longitude required' });
     }
 
+    const userLat = parseFloat(lat);
+    const userLng = parseFloat(lng);
+    const maxRadius = parseFloat(radius);
+
+    // Bounding box filter
+    const latDelta = maxRadius / 69.0;
+    const lngDelta = maxRadius / (69.0 * Math.cos(userLat * Math.PI / 180));
+
     let queryText = `
-      SELECT 
+      SELECT
         g.id, g.name, g.description, g.category, g.event_type, g.city,
         g.cover_image_url, g.member_count, g.created_at, g.lat, g.lng,
         u.username as creator_name
       FROM groups g
       JOIN users u ON g.creator_id = u.id
       WHERE g.is_public = true
+        AND g.lat BETWEEN $1 AND $2
+        AND g.lng BETWEEN $3 AND $4
     `;
 
-    const params = [];
-    let paramIndex = 1;
+    const params = [
+      userLat - latDelta, userLat + latDelta,
+      userLng - lngDelta, userLng + lngDelta,
+    ];
+    let paramIndex = 5;
 
     if (category) {
       queryText += ` AND g.category = $${paramIndex}`;
@@ -84,10 +97,6 @@ router.get('/search', optionalAuth, async (req, res) => {
     params.push(parseInt(limit));
 
     const result = await query(queryText, params);
-
-    const userLat = parseFloat(lat);
-    const userLng = parseFloat(lng);
-    const maxRadius = parseFloat(radius);
 
     const groups = result.rows
       .map(group => {
