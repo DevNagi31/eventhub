@@ -23,7 +23,7 @@ class SportsService {
       // Check cache first
       const cached = await cacheService.get(cacheKey);
       if (cached) {
-        console.log('✅ Returning cached SeatGeek events');
+        console.log('Returning cached SeatGeek events');
         return cached;
       }
 
@@ -51,7 +51,7 @@ class SportsService {
       // Cache for 30 minutes
       await cacheService.set(cacheKey, events, 1800);
 
-      console.log(`✅ Fetched ${events.length} events from SeatGeek`);
+      console.log(`Fetched ${events.length} events from SeatGeek`);
       return events;
     } catch (error) {
       console.error('SeatGeek API error:', error.message);

@@ -13,7 +13,7 @@ class AIChatbot {
       });
     } else {
       this.client = null;
-      console.warn('⚠️  Anthropic API key not configured - chatbot will use mock responses');
+      console.warn('Anthropic API key not configured - chatbot will use mock responses');
     }
   }
 

@@ -109,8 +109,8 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5001;
 
 httpServer.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   
   await testConnection();
 
@@ -125,7 +125,7 @@ httpServer.listen(PORT, async () => {
 });
 
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received — shutting down gracefully');
+  console.log('SIGTERM received - shutting down gracefully');
   if (process.env.SCRAPER_ENABLED !== 'false') {
     await scheduler.stop();
   }

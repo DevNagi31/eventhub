@@ -60,7 +60,7 @@ class EventAggregator {
         sourceNames.push('pandascore');
       }
 
-      // 4. Esports scrapers (HLTV, VLR.gg, LoL Esports, Liquipedia — always free)
+      // 4. Esports scrapers (HLTV, VLR.gg, LoL Esports, Liquipedia - always free)
       if (includeEsports) {
         promises.push(esportsScraper.scrapeAll());
         sourceNames.push('esports-scraper');

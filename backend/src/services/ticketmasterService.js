@@ -17,7 +17,7 @@ class TicketmasterService {
 
   async fetchEvents(location, radius = 50, options = {}) {
     if (!this.apiKey || this.apiKey === 'your_ticketmaster_api_key') {
-      console.log('⚠️  Ticketmaster API key not configured — skipping');
+      console.log('Ticketmaster API key not configured - skipping');
       return [];
     }
 
@@ -31,7 +31,7 @@ class TicketmasterService {
 
       const cached = await cacheService.get(cacheKey);
       if (cached) {
-        console.log('✅ Returning cached Ticketmaster events');
+        console.log('Returning cached Ticketmaster events');
         return cached;
       }
 
@@ -62,7 +62,7 @@ class TicketmasterService {
       // Cache for 30 minutes
       await cacheService.set(cacheKey, events, 1800);
 
-      console.log(`✅ Fetched ${events.length} events from Ticketmaster`);
+      console.log(`Fetched ${events.length} events from Ticketmaster`);
 
       // Store in DB
       await this.storeEvents(events);
@@ -70,7 +70,7 @@ class TicketmasterService {
       return events;
     } catch (error) {
       if (error.response?.status === 429) {
-        console.error('  Ticketmaster rate limit hit — try again later');
+        console.error('  Ticketmaster rate limit hit - try again later');
       } else {
         console.error('  Ticketmaster API error:', error.message);
       }

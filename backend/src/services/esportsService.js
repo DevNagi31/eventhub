@@ -17,7 +17,7 @@ class EsportsService {
       // Check cache first
       const cached = await cacheService.get(cacheKey);
       if (cached) {
-        console.log('✅ Returning cached PandaScore events');
+        console.log('Returning cached PandaScore events');
         return cached;
       }
 
@@ -51,7 +51,7 @@ class EsportsService {
       // Cache for 1 hour
       await cacheService.set(cacheKey, events, 3600);
 
-      console.log(`✅ Fetched ${events.length} events from PandaScore`);
+      console.log(`Fetched ${events.length} events from PandaScore`);
       return events;
     } catch (error) {
       console.error('PandaScore API error:', error.message);

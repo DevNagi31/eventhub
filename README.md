@@ -1,4 +1,4 @@
-# EventHub 🎯
+# EventHub
 
 A full-stack event discovery platform for finding sports and esports events near you, built with React, Node.js, PostgreSQL, Faktory job queue, and real-time chat.
 
@@ -8,7 +8,7 @@ A full-stack event discovery platform for finding sports and esports events near
 
 ![Events](screenshots/events-page.jpg)
 
-## 🚀 Features
+## Features
 
 - **Event Discovery**: Find sports and esports events within customizable radius
 - **Automated Scraping**: Faktory job queue scrapes events from multiple sources every 4 hours
@@ -18,11 +18,11 @@ A full-stack event discovery platform for finding sports and esports events near
 - **Dark Mode**: Toggle between light and dark themes
 - **Responsive Design**: Clean, bright startup-style UI with Tailwind CSS and Poppins
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - React 18 with Vite
-- Tailwind CSS (custom macOS theme)
+- Tailwind CSS (custom EventHub theme)
 - Socket.io-client for real-time features
 - React Router for navigation
 - Axios for API calls
@@ -43,7 +43,7 @@ A full-stack event discovery platform for finding sports and esports events near
 - Persistent message storage
 - Job monitoring via Faktory Web UI
 
-## 📸 Screenshots
+## Screenshots
 
 ### Event Discovery
 ![Events](screenshots/events.png)
@@ -60,7 +60,7 @@ A full-stack event discovery platform for finding sports and esports events near
 ### AI Assistant (HELP)
 ![AI Bot](screenshots/aibot.png)
 
-## 🏃‍♂️ Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+
@@ -109,7 +109,7 @@ CREATE DATABASE eventhub;
 # Run migrations from backend/migrations/
 ```
 
-## 🔧 Environment Variables
+## Environment Variables
 
 ### Backend (.env)
 ```
@@ -122,7 +122,7 @@ ANTHROPIC_API_KEY=your_api_key (optional)
 FRONTEND_URL=http://localhost:5173
 ```
 
-## 📚 API Documentation
+## API Documentation
 
 ### Authentication
 - `POST /api/auth/register` - Register new user
@@ -141,7 +141,7 @@ FRONTEND_URL=http://localhost:5173
 - `GET /api/group-messages/:groupId` - Get message history
 - WebSocket events: `join-group`, `leave-group`, `group-message`
 
-## 🎨 Key Features Explained
+## Key Features Explained
 
 ### Faktory Job Queue
 - Enterprise-grade background job processing
@@ -166,7 +166,7 @@ FRONTEND_URL=http://localhost:5173
 - Events searchable within custom radius (1-200 miles)
 - Efficient PostgreSQL queries with distance filtering
 
-## 🔍 Faktory Monitoring
+## Faktory Monitoring
 
 Access the Faktory Web UI at `http://localhost:7420` to monitor:
 - Job queue status
@@ -174,18 +174,18 @@ Access the Faktory Web UI at `http://localhost:7420` to monitor:
 - Job history
 - Worker performance
 
-## 🤝 Contributing
+## Contributing
 
 This is a portfolio project, but feedback is welcome!
 
-## 👨‍💻 Author
+## Author
 
 **Dev Krishna Nagi**
 - LinkedIn: [linkedin.com/in/dev-nagi31](https://linkedin.com/in/dev-nagi31)
 - Portfolio: [portfolio-sandy-pi-24.vercel.app](https://portfolio-sandy-pi-24.vercel.app)
 - Email: dnagi@binghamton.edu
 
-## 📝 License
+## License
 
 MIT License - feel free to use this for learning!
 

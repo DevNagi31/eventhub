@@ -4,7 +4,7 @@ let redisClient = null;
 
 async function connectRedis() {
   if (!process.env.REDIS_URL) {
-    console.log('⚠️  Redis URL not configured - running without cache');
+    console.log('Redis URL not configured - running without cache');
     return null;
   }
 
@@ -17,14 +17,14 @@ async function connectRedis() {
     });
 
     redisClient.on('error', (err) => {
-      console.log('⚠️  Redis unavailable:', err.message);
+      console.log('Redis unavailable:', err.message);
     });
 
     await redisClient.connect();
-    console.log('✅ Connected to Redis');
+    console.log('Connected to Redis');
     return redisClient;
   } catch (error) {
-    console.log('⚠️  Redis unavailable - running without cache');
+    console.log('Redis unavailable - running without cache');
     return null;
   }
 }

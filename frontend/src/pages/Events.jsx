@@ -20,7 +20,7 @@ export default function Events() {
   });
   const debounceRef = useRef(null);
 
-  // Debounced fetch — waits 400ms after last filter change
+  // Debounced fetch - waits 400ms after last filter change
   const debouncedFetch = useCallback(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -96,7 +96,7 @@ export default function Events() {
           const savedRes = await checkSavedEvents(ids);
           setSavedIds(new Set(savedRes.data.savedIds));
         } catch {
-          // Silently fail — saved status is non-critical
+          // Silently fail - saved status is non-critical
         }
       }
     } catch (error) {

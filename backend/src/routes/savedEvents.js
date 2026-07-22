@@ -25,7 +25,7 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Batch check which events are saved — must be before /:eventId
+// Batch check which events are saved - must be before /:eventId
 router.post('/check', authenticateToken, async (req, res) => {
   try {
     const { eventIds } = req.body;

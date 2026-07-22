@@ -56,7 +56,7 @@ class ScraperService {
 
   // ── CATEGORIZATION ──────────────────────────────────────────────
 
-  // Word boundary match — prevents "sigma gamma" matching "mma"
+  // Word boundary match - prevents "sigma gamma" matching "mma"
   _matchKeyword(text, keyword) {
     // Multi-word phrases or long keywords: simple includes is safe
     if (keyword.length >= 5 || keyword.includes(' ')) {
@@ -69,7 +69,7 @@ class ScraperService {
   categorizeEvent(title, description = '') {
     const text = `${title} ${description}`.toLowerCase();
 
-    // Esports — check first (more specific)
+    // Esports - check first (more specific)
     const esportCategories = {
       valorant: ['valorant'],
       league_of_legends: ['league of legends', 'lol esport', 'lol champ'],
@@ -116,7 +116,7 @@ class ScraperService {
       return { eventType: 'sports', category: 'general' };
     }
 
-    // Community — fine-grained categories
+    // Community - fine-grained categories
     const communityCategories = {
       music: ['concert', 'live music', 'open mic', 'live band', 'symphony', 'orchestra', 'jazz night', 'blues night', 'rock show', 'dj set', 'edm', 'hip hop', 'rapper', 'singer', 'acoustic', 'music festival', 'karaoke', 'album release'],
       comedy: ['comedy', 'stand-up', 'standup', 'improv', 'comedian', 'comedy show', 'funny'],
